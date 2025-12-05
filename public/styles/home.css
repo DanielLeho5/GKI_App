@@ -6,6 +6,10 @@ main {
     justify-content: center;
 }
 
+select {
+    background-color: white;
+}
+
 .stats {
     display: flex;
     flex-direction: column;
@@ -211,10 +215,11 @@ label {
     scale: 1.5;
     border-radius: 50%;
     height: min-content;
+    background-color: white;
 }
 
 .edit-time-input:hover {
-    background-color: white;
+    outline: 4px solid rgb(255, 255, 255);
 }
 
 

@@ -14,4 +14,12 @@ router.get("/register", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "static", "register.html"))
 })
 
+router.get("/feedback", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "static", "feedback.html"))
+})
+
+router.get("/feedback_loggedIn", (req, res) => {
+    res.sendFile(path.join(__dirname, "..", "static", "feedback-loggedIn.html"))
+})
+
 module.exports = router

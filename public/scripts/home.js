@@ -190,6 +190,12 @@ async function updateFunctionality() {
     }
 }
 
+function navBarLinks() {
+    document.querySelector('.js-feedback-list-el').addEventListener("click", () => 
+        {window.location.href = `${host_url}/feedback_loggedIn`})
+}
+
+navBarLinks()
 setNowAsDefaultTime()
 renderStats()
 addNewRecordFunctionality()

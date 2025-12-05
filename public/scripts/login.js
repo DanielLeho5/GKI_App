@@ -27,4 +27,12 @@ async function addLoginFunctionality() {
     })
 }
 
+function navBarLinks() {
+    document.querySelector('.js-register-list-el').addEventListener("click", () => 
+        {window.location.href = `${host_url}/register`})
+    document.querySelector('.js-feedback-list-el').addEventListener("click", () => 
+        {window.location.href = `${host_url}/feedback`})
+}
+
+navBarLinks()
 addLoginFunctionality()

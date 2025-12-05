@@ -28,4 +28,12 @@ async function addRegsiterFunctionality() {
     })
 }
 
+function navBarLinks() {
+    document.querySelector('.js-signin-list-el').addEventListener("click", () => 
+        {window.location.href = `${host_url}/login`})
+    document.querySelector('.js-feedback-list-el').addEventListener("click", () => 
+        {window.location.href = `${host_url}/feedback`})
+}
+
+navBarLinks()
 addRegsiterFunctionality()
