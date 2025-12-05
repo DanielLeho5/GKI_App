@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GKI Tracker</title>
+    <link rel="stylesheet" href="/styles/general.css">
+    <link rel="stylesheet" href="/styles/home.css">
+</head>
+<body>
+    <nav class="navbar js-navbar">
+        <div>GKI Tracker</div>
+        <div>lll</div>
+    </nav>
+    <main>
+        <div class="add-new-record-container">
+            <div class="new-record-title">Add a new measurement:</div>
+            <form class="new-record-fields js-new-record-form">
+                <div class="glucose-inputs-container">
+                    <label for="glucose">Glucose</label>
+                    <input type="number" name="glucose" required step="0.1">
+                    <select name="glucose_unit" required>
+                        <option value="mmol/L">mmol/L</option>
+                        <option value="mg/dL">mg/dL</option>
+                    </select>
+                </div>
+                <div class="ketone-inputs-container">
+                    <label for="ketone">Ketone</label>
+                    <input type="number" name="ketone" required step="0.1">
+                    <select name="ketone_unit" required>
+                        <option value="mmol/L">mmol/L</option>
+                        <option value="mg/dL">mg/dL</option>
+                    </select>
+                </div>
+                <div class="date-inputs-container">
+                    <input type="datetime-local" name="measurement_time" required class="js-date-time-input">
+                </div>
+                <div class="actions-container">
+                    <button type="submit" class="add-new-record-button">Add</button>
+                    <button type="reset" class="reset-new-record-button">Cancel</button>
+                </div>
+            </form>
+        </div>
+        <div class="stats-label">Your records:</div>
+        <div class="stats js-stats-container">
+            <div class="row labels">
+                <div>Glucose</div>
+                <div>Ketones</div>
+                <div class="gki-label">GKI</div>
+                <div>Date</div>
+                <div>Edit</div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/scripts/home.js" type="module"></script>
+    <script src="/scripts/navbar.js"></script>
+</body>
+</html>

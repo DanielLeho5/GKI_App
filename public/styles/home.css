@@ -1,0 +1,209 @@
+main {
+    margin-top: 75px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.stats {
+    display: flex;
+    flex-direction: column;
+    width: 50vw;
+}
+
+.row, .labels {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.5fr) minmax(0, 0.75fr) minmax(0, 1.5fr) minmax(0, 1.5fr);
+    max-width: 100%;
+}
+
+.row div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    padding: 3px 5px;
+}
+
+.row > :last-child {
+    display: flex;
+}
+
+.labels {
+    background-color: #0088ff;
+}
+
+.labels div {
+    color: white;
+    font-weight: bold;
+}
+
+.gki-disp {
+    background-color: #0000001c;
+    font-weight: bold;
+}
+
+.row:nth-child(even) {
+    background-color: rgb(243, 243, 243);
+}
+
+.row:not(:first-child):nth-child(odd) {
+    background-color: rgb(216, 216, 216);
+}
+
+.action-button {
+    background-color: transparent;
+    margin: 0 5px;
+    border: none;
+    height: 22px;
+    width: 22px;
+}
+
+.delete-button {
+    fill: rgb(214, 0, 0);
+}
+
+.edit-button {
+    fill: #000000;
+}
+
+.delete-button:hover {
+    fill: rgb(255, 86, 86);
+}
+
+.edit-button:hover {
+    fill: #0088ff;
+}
+
+.gki-label {
+    background-color: #0000001c;
+}
+
+.glucose-grid, .ketone-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.stats-label {
+    font-size: 1.1rem;
+    margin: 15px 0px;
+}
+
+.new-record-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: start;
+    width: 100%;
+}
+
+.new-record-title {
+    background-color: #0088ff;
+    padding: 3px 5px;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+form input, form select {
+    width: 100%;
+    border: none;
+    padding: 3px 5px;
+    text-align: center;
+}
+
+form input:focus, form select:focus {
+    outline: 2px solid rgb(0, 136, 255);
+}
+
+.glucose-inputs-container,
+.ketone-inputs-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1.5fr;
+    gap: 15px;
+    background-color: rgb(216, 216, 216);
+    width: 100%;
+    padding: 7px 20px;
+}
+
+.date-inputs-container {
+    background-color: rgb(216, 216, 216);
+    width: 100%;
+    padding: 7px 20px;
+}
+
+label {
+    justify-self: end;
+}
+
+.actions-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.actions-container button {
+    width: 40%;
+    border: none;
+    padding: 5px;
+}
+
+.add-new-record-button {
+    background-color: rgb(183, 241, 165);
+    color: green;
+}
+
+.reset-new-record-button {
+    background-color: rgb(255, 177, 177);
+    color: rgb(117, 1, 1);
+}
+
+.add-new-record-button:hover {
+    background-color: rgb(157, 235, 134);
+    color: green;
+}
+
+.reset-new-record-button:hover {
+    background-color: rgb(255, 141, 141);
+    color: rgb(117, 1, 1);
+}
+
+.add-new-record-button:focus {
+    outline: 2px solid green;
+}
+
+.reset-new-record-button:focus {
+    outline: 2px solid rgb(117, 1, 1);
+}
+
+.add-new-record-container {
+    width: 50vw;
+    background-color: rgb(243, 243, 243);
+}
+
+.edit-input-field {
+    max-width: 80px;
+    padding: 3px;
+    text-align: center;
+}
+
+.edit-time-input {
+    width: 20px;
+    aspect-ratio: 1;
+}
+
+@media (max-width: 700px) {
+    .stats {
+        width: 100%;
+    }
+
+    .add-new-record-container {
+        width: 100%;
+    }
+}
