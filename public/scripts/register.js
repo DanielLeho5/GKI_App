@@ -8,7 +8,7 @@ async function addRegsiterFunctionality() {
         const username = formData.get("username")
         const password = formData.get("password")
 
-        const res = await fetch("http://localhost:5000/api/auth/register", {
+        const res = await fetch("https://gki-app.onrender.com/api/auth/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -17,7 +17,7 @@ async function addRegsiterFunctionality() {
         })
 
         if (res.ok) {
-            window.location.href = "http://localhost:5000/login"
+            window.location.href = "https://gki-app.onrender.com/login"
             return
         }
 

@@ -15,7 +15,7 @@ async function addNewRecordFunctionality() {
 
         //console.log(glucose, glucose_unit, ketone, ketone_unit, measurement_time)
 
-        const res = await fetch("http://localhost:5000/api/gk", {
+        const res = await fetch("https://gki-app.onrender.com/api/gk", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -41,11 +41,11 @@ function setNowAsDefaultTime() {
 }
 
 async function renderStats() {
-    const res = await fetch("http://localhost:5000/api/gk")
+    const res = await fetch("https://gki-app.onrender.com/api/gk")
    
     if (!res.ok) {
         console.log("Couldn't fetch data or invalid token")
-        window.location.href = "http://localhost:5000/login"
+        window.location.href = "https://gki-app.onrender.com/login"
         return
     }
 
@@ -106,7 +106,7 @@ async function deleteFunctionality() {
         button.addEventListener("click", async () => {
             const recordId = button.dataset.recordId
             
-            await fetch(`http://localhost:5000/api/gk/${recordId}`, {
+            await fetch(`https://gki-app.onrender.com/api/gk/${recordId}`, {
                 method: "DELETE"
             })
 
@@ -171,7 +171,7 @@ async function updateFunctionality() {
                 Object.entries(data).filter(([_, v]) => v != null && v !== "")
             );
 
-            await fetch(`http://localhost:5000/api/gk/${recordId}`, {
+            await fetch(`https://gki-app.onrender.com/api/gk/${recordId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(filtered)

@@ -7,7 +7,7 @@ async function addLoginFunctionality() {
         const email = formData.get("email")
         const password = formData.get("password")
 
-        const res = await fetch("http://localhost:5000/api/auth/login", {
+        const res = await fetch("https://gki-app.onrender.com/api/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -16,7 +16,7 @@ async function addLoginFunctionality() {
         })
 
         if (res.ok) {
-            window.location.href = "http://localhost:5000/"
+            window.location.href = "https://gki-app.onrender.com/"
             return
         }
 
