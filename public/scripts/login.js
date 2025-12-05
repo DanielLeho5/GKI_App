@@ -1,3 +1,5 @@
+import {host_url} from "./utils/settings.js"
+
 async function addLoginFunctionality() {
     const loginForm = document.querySelector('.js-login-form')
     loginForm.addEventListener('submit', async (e) => {
@@ -7,7 +9,7 @@ async function addLoginFunctionality() {
         const email = formData.get("email")
         const password = formData.get("password")
 
-        const res = await fetch("https://gki-app.onrender.com/api/auth/login", {
+        const res = await fetch(`${host_url}/api/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -16,7 +18,7 @@ async function addLoginFunctionality() {
         })
 
         if (res.ok) {
-            window.location.href = "https://gki-app.onrender.com/"
+            window.location.href = `${host_url}/`
             return
         }
 

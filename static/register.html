@@ -8,10 +8,14 @@
     <link rel="stylesheet" href="/styles/auth.css">
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar js-navbar">
         <div>GKI Tracker</div>
-        <div>lll</div>
+        <div class="nav-more js-nav-more">lll</div>
     </nav>
+    <ul class="navigation-links js-navigation-links">
+        <li>Sign In</li>
+        <li>Feedback</li>
+    </ul>
     <main>
         <form class="auth-container js-register-form">
             <div class="title">Start here!</div>
@@ -28,6 +32,7 @@
         </form>
     </main>
 
-    <script src="/scripts/register.js"></script>
+    <script src="/scripts/register.js" type="module"></script>
+    <script src="/scripts/navbar.js"></script>
 </body>
 </html>

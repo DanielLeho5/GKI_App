@@ -1,3 +1,5 @@
+import {host_url} from "./utils/settings.js"
+
 async function addRegsiterFunctionality() {
     const loginForm = document.querySelector('.js-register-form')
     loginForm.addEventListener('submit', async (e) => {
@@ -8,7 +10,7 @@ async function addRegsiterFunctionality() {
         const username = formData.get("username")
         const password = formData.get("password")
 
-        const res = await fetch("https://gki-app.onrender.com/api/auth/register", {
+        const res = await fetch(`${host_url}/api/auth/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -17,7 +19,7 @@ async function addRegsiterFunctionality() {
         })
 
         if (res.ok) {
-            window.location.href = "https://gki-app.onrender.com/login"
+            window.location.href = `${host_url}/login`
             return
         }
 

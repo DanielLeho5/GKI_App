@@ -24,3 +24,44 @@ nav div {
     position: fixed;
     transition: top 0.25s ease-in-out;
 }
+
+.navbar div {
+    user-select: none;
+    cursor: pointer;
+}
+
+.nav-more {
+    rotate: 90deg;
+    width: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 10px;
+}
+
+.nav-more:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.navigation-links {
+    position: absolute;
+    width: 100%;
+    margin-top: 64px;
+    visibility: hidden;
+}
+
+.navigation-links li {
+    background-image: linear-gradient(90deg, rgb(33, 44, 75, 0),rgba(33, 44, 75));
+    padding: 10px 45px;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    font-weight: bold;
+    text-align: end;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+}
+
+.navigation-links li:hover {
+    background-image: linear-gradient(90deg, rgba(33, 44, 75, 0.418),rgba(33, 44, 75));
+}
