@@ -1,5 +1,6 @@
 import { formatDate } from "./utils/date.js"
 import {host_url} from "./utils/settings.js"
+import { logOutFunctionality } from "./utils/logOut.js"
 
 async function addNewRecordFunctionality() {
     const newRecordForm = document.querySelector('.js-new-record-form')
@@ -56,7 +57,7 @@ async function renderStats() {
         <div class="row labels">
             <div>Glucose</div>
             <div>Ketones</div>
-            <div class="gki-label">GKI</div>
+            <div class="gki-label" title="Units converted to mmol/L">GKI</div>
             <div>Date</div>
             <div>Edit</div>
         </div>
@@ -65,10 +66,12 @@ async function renderStats() {
     if (records) {
         records.forEach(record => {
         const {glucose, glucose_unit, ketone, ketone_unit, measurement_time} = record
-        const gki = (glucose/ketone).toFixed(1)
-        const date = new Date(measurement_time)
 
-        //console.log(glucose, glucose_unit, ketone, ketone_unit, gki, date)
+        const mmolLglucose = glucose * (glucose_unit === "mmol/L" ? 1 : 18.02)
+        const mmolLketone = ketone * (ketone_unit === "mmol/L" ? 1 : 10.41)
+        const gki = (mmolLglucose/mmolLketone).toFixed(1)
+
+        const date = new Date(measurement_time)
 
         statsHTML += `
             <div class="row record">
@@ -195,6 +198,7 @@ function navBarLinks() {
         {window.location.href = `${host_url}/feedback_loggedIn`})
 }
 
+logOutFunctionality()
 navBarLinks()
 setNowAsDefaultTime()
 renderStats()

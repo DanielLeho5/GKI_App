@@ -20,10 +20,13 @@ async function addLoginFunctionality() {
         if (res.ok) {
             window.location.href = `${host_url}/`
             return
-        }
-
+        } 
+        
         const data = await res.json()
-        console.log(data)
+
+        const errDisplay = document.querySelector('.js-error-display')
+        errDisplay.textContent = (data.message)
+        errDisplay.style.visibility = "visible";
     })
 }
 

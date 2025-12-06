@@ -24,7 +24,7 @@ async function addRegsiterFunctionality() {
         }
 
         const data = await res.json()
-        console.log(data.message)
+        document.querySelector('.js-error-display').textContent = (data.message)
     })
 }
 

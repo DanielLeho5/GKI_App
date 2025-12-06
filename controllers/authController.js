@@ -1,6 +1,19 @@
 const User = require("../models/userModel")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+const nodemailer = require("nodemailer")
+const crypto = require("crypto")
+const path = require("path")
+//host_url = "http://localhost:5000"
+host_url = "https://gki-app.onrender.com"
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER, // your email
+    pass: process.env.EMAIL_PASS  // your app password
+  }
+});
 
 async function registerUser(req, res) {
     try {
@@ -15,7 +28,7 @@ async function registerUser(req, res) {
 
         if (!email || !username || !password) {
             res.status(400).json({
-                message: "Must email and username and password!"
+                message: "Must enter email and username and password!"
             })
             return
         }
@@ -31,20 +44,52 @@ async function registerUser(req, res) {
 
         const hashedPassword = await bcrypt.hash(password, 10)
 
-        const newUser = await User.create({email, username, password: hashedPassword})
+        const token = crypto.randomBytes(32).toString("hex");
 
-        if (newUser) {
-            res.status(200).json({
-                message: "User registered succesfully!",
-                newUser
-            })
-            return
+        const newUser = await User.create({
+            email, 
+            username, 
+            password: hashedPassword, 
+            verified: false,
+            verificationToken: token,
+            verificationTokenExpires: Date.now() + 1000 * 60 * 60 * 24
+        })
+
+        if (!newUser) {
+            return res.status(500).json({
+                message: "Unexpected error creating user."
+            });
         }
 
-        res.status(500).json({
-            message: "Unexpected error!",
-            error
-        })
+        const verifyUrl = `${host_url}/api/auth/verify?token=${token}`;
+
+        const sentInfo = await transporter.sendMail({
+            to: email,
+            subject: "Verify your email",
+            html: `
+                <h1>Verify Your Email</h1>
+                <p>Click the link below to verify your account:</p>
+                <a href="${verifyUrl}">${verifyUrl}</a>
+            `
+        });
+
+        const sentSuccess =
+            sentInfo.accepted &&
+            sentInfo.accepted.length > 0 &&
+            (!sentInfo.rejected || sentInfo.rejected.length === 0);
+
+        if (!sentSuccess) {
+            // Optional: clean up user since they cannot receive verification email
+            await User.deleteOne({ _id: newUser._id });
+
+            return res.status(500).json({
+                message: "Failed to send verification email! Account not created."
+            });
+        }
+
+        return res.status(200).json({
+            message: "User registered successfully! Check your email to verify."
+        });
 
     } catch (error) {
         res.status(500).json({
@@ -90,6 +135,13 @@ async function loginUser(req, res) {
             return
         }
 
+        if (!user.verified) {
+            res.status(401).json({
+                message: "Please verify account!"
+            })
+            return
+        }
+
         const token = jwt.sign(
             {id: user._id, email: user.email, username: user.username},
             process.env.JWT_SECRET,
@@ -100,7 +152,7 @@ async function loginUser(req, res) {
             res.cookie("gkiToken", token, {
                 httpOnly: true,
                 secure: false, // true for production version
-                sameSite: "lax" // strict for production version
+                sameSite: "strict" // strict for production version
             })
             .status(200)
             .json({
@@ -122,4 +174,43 @@ async function loginUser(req, res) {
     }
 }
 
-module.exports = {registerUser, loginUser}
+async function logOutUser(req, res) {
+    res.clearCookie("gkiToken", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict"
+    });
+
+    res.status(200).json({ message: "Logged out successfully" });
+}
+
+async function verifyEmail(req, res) {
+    try {
+        const { token } = req.query;
+
+        if (!token) {
+            return res.status(400).send("Verification token is missing.");
+        }
+
+        const user = await User.findOne({
+            verificationToken: token,
+            verificationTokenExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.status(400).sendFile(path.join(__dirname, "..", "static/oops.html"));
+        }
+
+        // Mark user as verified
+        user.verified = true;
+        user.verificationToken = undefined;
+        user.verificationTokenExpires = undefined;
+        await user.save();
+
+        res.status(200).sendFile(path.join(__dirname, "..", "static/login.html"));
+    } catch (error) {
+        res.status(500).sendFile(path.join(__dirname, "..", "static/oops.html"));
+    }
+}
+
+module.exports = {registerUser, loginUser, logOutUser, verifyEmail}

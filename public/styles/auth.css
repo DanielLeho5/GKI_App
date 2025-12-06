@@ -85,3 +85,11 @@ main {
 input::placeholder {
     color: rgba(0, 0, 0, 0.247);
 }
+
+.error-display {
+    color: rgb(163, 0, 0);
+    align-self: center;
+    padding: 3px 15px;
+    background-color: rgb(255, 177, 177);
+    visibility: hidden;
+}

@@ -41,6 +41,8 @@ select {
 .labels div {
     color: white;
     font-weight: bold;
+    cursor: default;
+    user-select: none;
 }
 
 .gki-disp {
