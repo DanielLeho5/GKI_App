@@ -4,8 +4,7 @@ const jwt = require("jsonwebtoken")
 const nodemailer = require("nodemailer")
 const crypto = require("crypto")
 const path = require("path")
-//host_url = "http://localhost:5000"
-host_url = "https://gki-app.onrender.com"
+const host_url = process.env.host_url
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -14,6 +13,12 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS  // your app password
   }
 });
+
+transporter.verify((err, success) => {
+  if (err) console.log("SMTP Error:", err);
+  else console.log("SMTP ready");
+});
+
 
 async function registerUser(req, res) {
     try {
@@ -72,6 +77,8 @@ async function registerUser(req, res) {
                 <a href="${verifyUrl}">${verifyUrl}</a>
             `
         });
+
+        console.log(sentInfo)
 
         const sentSuccess =
             sentInfo.accepted &&
