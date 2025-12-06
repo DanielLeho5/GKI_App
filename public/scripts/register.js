@@ -24,7 +24,10 @@ async function addRegsiterFunctionality() {
         }
 
         const data = await res.json()
-        document.querySelector('.js-error-display').textContent = (data.message)
+
+        const errDisplay = document.querySelector('.js-error-display')
+        errDisplay.textContent = (data.message)
+        errDisplay.style.visibility = "visible";
     })
 }
 
