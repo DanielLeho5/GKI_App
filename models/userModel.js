@@ -13,14 +13,7 @@ const userSchema = mongoose.Schema({
     password: {
         type: String,
         required: true
-    },
-    verified: {
-        type: Boolean,
-        requied: true,
-        default: false
-    },
-    verificationToken: String,
-    verificationTokenExpires: Date
+    }
 }, { timestamps: true })
 
 module.exports = mongoose.model("User", userSchema)

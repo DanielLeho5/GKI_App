@@ -1,20 +1,7 @@
 const User = require("../models/userModel")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const nodemailer = require("nodemailer")
-const crypto = require("crypto")
-const path = require("path")
 const host_url = process.env.host_url
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
 
 async function registerUser(req, res) {
     try {
@@ -45,15 +32,10 @@ async function registerUser(req, res) {
 
         const hashedPassword = await bcrypt.hash(password, 10)
 
-        const token = crypto.randomBytes(32).toString("hex");
-
         const newUser = await User.create({
             email, 
             username, 
-            password: hashedPassword, 
-            verified: false,
-            verificationToken: token,
-            verificationTokenExpires: Date.now() + 1000 * 60 * 60 * 24
+            password: hashedPassword
         })
 
         if (!newUser) {
@@ -62,36 +44,8 @@ async function registerUser(req, res) {
             });
         }
 
-        const verifyUrl = `${host_url}/api/auth/verify?token=${token}`;
-
-        const sentInfo = await transporter.sendMail({
-            to: email,
-            subject: "Verify your email",
-            html: `
-                <h1>Verify Your Email</h1>
-                <p>Click the link below to verify your account:</p>
-                <a href="${verifyUrl}">${verifyUrl}</a>
-            `
-        });
-
-        console.log(sentInfo)
-
-        const sentSuccess =
-            sentInfo.accepted &&
-            sentInfo.accepted.length > 0 &&
-            (!sentInfo.rejected || sentInfo.rejected.length === 0);
-
-        if (!sentSuccess) {
-            // Optional: clean up user since they cannot receive verification email
-            await User.deleteOne({ _id: newUser._id });
-
-            return res.status(500).json({
-                message: "Failed to send verification email! Account not created."
-            });
-        }
-
         return res.status(200).json({
-            message: "User registered successfully! Check your email to verify."
+            message: "User registered successfully!"
         });
 
     } catch (error) {
@@ -138,13 +92,6 @@ async function loginUser(req, res) {
             return
         }
 
-        if (!user.verified) {
-            res.status(401).json({
-                message: "Please verify account!"
-            })
-            return
-        }
-
         const token = jwt.sign(
             {id: user._id, email: user.email, username: user.username},
             process.env.JWT_SECRET,
@@ -187,33 +134,4 @@ async function logOutUser(req, res) {
     res.status(200).json({ message: "Logged out successfully" });
 }
 
-async function verifyEmail(req, res) {
-    try {
-        const { token } = req.query;
-
-        if (!token) {
-            return res.status(400).send("Verification token is missing.");
-        }
-
-        const user = await User.findOne({
-            verificationToken: token,
-            verificationTokenExpires: { $gt: Date.now() }
-        });
-
-        if (!user) {
-            return res.status(400).sendFile(path.join(__dirname, "..", "static/oops.html"));
-        }
-
-        // Mark user as verified
-        user.verified = true;
-        user.verificationToken = undefined;
-        user.verificationTokenExpires = undefined;
-        await user.save();
-
-        res.status(200).sendFile(path.join(__dirname, "..", "static/login.html"));
-    } catch (error) {
-        res.status(500).sendFile(path.join(__dirname, "..", "static/oops.html"));
-    }
-}
-
-module.exports = {registerUser, loginUser, logOutUser, verifyEmail}
+module.exports = {registerUser, loginUser, logOutUser}
