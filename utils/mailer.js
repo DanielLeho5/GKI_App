@@ -36,9 +36,9 @@ async function sendVerificationMail(recipient, verificationUrl) {
 
         const info = await transport.sendMail(mailOptions)
 
-        //console.log(inf)
+        console.log(info)
     } catch (error) {
-        console.log(error)
+        console.log("Error:", error)
     }
 }
 
