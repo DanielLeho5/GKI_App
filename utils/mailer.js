@@ -1,45 +1,39 @@
-const nodemailer = require("nodemailer");
-const {google} = require("googleapis");
+const { google } = require("googleapis");
 
-const oAuth2Client = new google.auth.OAuth2(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URI)
-oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN })
+const gmail = google.gmail("v1");
 
 async function sendVerificationMail(recipient, verificationUrl) {
-    try {
+  const auth = new google.auth.OAuth2(
+    process.env.CLIENT_ID,
+    process.env.CLIENT_SECRET,
+    process.env.REDIRECT_URI
+  );
 
-        const accesToken = await oAuth2Client.getAccessToken()
+  auth.setCredentials({
+    refresh_token: process.env.REFRESH_TOKEN,
+  });
 
-        const transport = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                type: "oauth2",
-                user: "lehoczki.dani5@gmail.com",
-                clientId: process.env.CLIENT_ID,
-                clientSecret: process.env.CLIENT_SECRET,
-                refreshToken: process.env.REFRESH_TOKEN,
-                accessToken: accesToken
-            }
-        })
+  const rawMessage = Buffer.from(
+    `From: Daniel Lehoczki <lehoczki.dani5@gmail.com>\r\n` +
+    `To: ${recipient}\r\n` +
+    `Subject: GKI App Email Verification\r\n` +
+    `Content-Type: text/html; charset=utf-8\r\n\r\n` +
+    `<h1>Verify Your Email for the GKI App</h1>
+     <p>Click on the link below to verify your email address!</p>
+     <a href="${verificationUrl}">Verify Email</a>`
+  )
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
 
-        const mailOptions = {
-            from: 'Daniel Lehoczki <lehoczki.dani5@gmail.com>',
-            to: recipient,
-            subject: "GKI App Email Verification",
-            text: "Verify Your Email for you GKI App",
-            html: `
-                <h1>Verify Your Email for you GKI App</h1>
-                <p>Click the link below to verify your email:</p>
-                <a href="${verificationUrl}">Verify Email</a>
-                <p>This link expires in 1 hour.</p>
-            `
-        }
-
-        const info = await transport.sendMail(mailOptions)
-
-        console.log(info)
-    } catch (error) {
-        console.log("Error:", error)
-    }
+  await gmail.users.messages.send({
+    auth,
+    userId: "me",
+    requestBody: {
+      raw: rawMessage,
+    },
+  });
 }
 
-module.exports = { sendVerificationMail }
+module.exports = { sendVerificationMail };
