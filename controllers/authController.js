@@ -1,6 +1,8 @@
 const User = require("../models/userModel")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+const crypto = require("crypto")
+const { sendVerificationMail } = require("../utils/mailer.js")
 
 async function registerUser(req, res) {
     try {
@@ -31,10 +33,26 @@ async function registerUser(req, res) {
 
         const hashedPassword = await bcrypt.hash(password, 10)
 
+        // create the email verification token
+
+        const verificatonToken = crypto.randomBytes(32).toString("hex")
+            
+        // hash the verification token
+
+        const hashedToken = crypto
+            .createHash("sha256")
+            .update(verificatonToken)
+            .digest("hex");
+
+        // add user with verification data
+
         const newUser = await User.create({
-            email, 
+            email,
             username, 
-            password: hashedPassword
+            password: hashedPassword,
+            verified: false,
+            emailVerificationToken: hashedToken,
+            emailVerificationExpires: Date.now() + 1000 * 60 * 60
         })
 
         if (!newUser) {
@@ -43,11 +61,18 @@ async function registerUser(req, res) {
             });
         }
 
+        // send email
+        
+        const verificationUrl = `${process.env.host_url}/api/auth/verify-email?token=${verificatonToken}`
+
+        await sendVerificationMail(newUser.email, verificationUrl)
+
         return res.status(200).json({
             message: "User registered successfully!"
         });
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             message: "Something went wrong!",
             error
@@ -91,6 +116,54 @@ async function loginUser(req, res) {
             return
         }
 
+        if (!user.verified) {
+            // send new verification email
+
+            // create the email verification token
+
+            const verificatonToken = crypto.randomBytes(32).toString("hex")
+                
+            // hash the verification token
+
+            const hashedToken = crypto
+                .createHash("sha256")
+                .update(verificatonToken)
+                .digest("hex");
+
+            // add user with verification data
+
+            const updatedUser = await User.findOneAndUpdate(
+                {
+                    email
+                },
+                {
+                    $set: {
+                        emailVerificationToken: hashedToken,
+                        emailVerificationExpires: Date.now() + 1000 * 60 * 60
+                    }
+                },
+                { new: true }
+            )
+
+            if (!updatedUser) {
+                return res.status(500).json({
+                    message: "Unexpected error updating user verification info. We have sent you another email."
+                });
+            }
+
+            // send email
+            
+            const verificationUrl = `${process.env.host_url}/api/auth/verify-email?token=${verificatonToken}`
+
+            await sendVerificationMail(updatedUser.email, verificationUrl)
+
+            res.status(401).json({
+                message: "Please verify your email!"
+            })
+
+            return
+        }
+
         const token = jwt.sign(
             {id: user._id, email: user.email, username: user.username},
             process.env.JWT_SECRET,
@@ -128,9 +201,33 @@ async function logOutUser(req, res) {
         httpOnly: true,
         secure: true,
         sameSite: "strict"
-    });
+    })
 
-    res.status(200).json({ message: "Logged out successfully" });
+    res.status(200).json({ message: "Logged out successfully" })
 }
 
-module.exports = {registerUser, loginUser, logOutUser}
+async function verifiyEmail(req, res) {
+    const { token } = req.query
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
+
+    const user = await User.findOneAndUpdate(
+        {
+            emailVerificationToken: hashedToken,
+            emailVerificationExpires: { $gt: Date.now() }
+        }, 
+        { 
+            $set: {verified: true},
+            $unset: {emailVerificationToken: "", emailVerificationExpires: ""}
+        },
+        { new: true }
+    )
+
+    if (!user) {
+        return res.status(400).send("Invalid or expired token")
+    }
+
+    res.status(200).redirect(`${process.env.host_url}/login`)
+}
+
+module.exports = {registerUser, loginUser, logOutUser, verifiyEmail}
