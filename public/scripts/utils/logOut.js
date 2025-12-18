@@ -1,4 +1,4 @@
-import {host_url} from "./settings.js"
+const host_url = window.location.origin
 
 export async function logOutFunctionality() {
     document.querySelector('.js-logout-button').addEventListener('click', async () => {

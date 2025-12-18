@@ -1,5 +1,5 @@
 import { formatDate } from "./utils/date.js"
-import {host_url} from "./utils/settings.js"
+const host_url = window.location.origin
 import { logOutFunctionality } from "./utils/logOut.js"
 
 async function addNewRecordFunctionality() {

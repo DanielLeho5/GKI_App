@@ -1,4 +1,4 @@
-import {host_url} from "./utils/settings.js"
+const host_url = window.location.origin
 
 async function addRegsiterFunctionality() {
     const loginForm = document.querySelector('.js-register-form')

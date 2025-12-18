@@ -1,4 +1,4 @@
-import {host_url} from "./utils/settings.js"
+const host_url = window.location.origin
 
 function navBarLinks() {
     document.querySelector('.js-signin-list-el').addEventListener("click", () => 

@@ -1,4 +1,4 @@
-import {host_url} from "./utils/settings.js"
+const host_url = window.location.origin
 
 async function addLoginFunctionality() {
     const loginForm = document.querySelector('.js-login-form')
