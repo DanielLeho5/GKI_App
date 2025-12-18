@@ -1,5 +1,4 @@
 const host_url = window.location.origin
-console.log(host_url)
 
 async function addRegsiterFunctionality() {
     const loginForm = document.querySelector('.js-register-form')
